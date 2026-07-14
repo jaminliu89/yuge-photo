@@ -1,0 +1,77 @@
+---
+// BaseLayout.astro — shared layout for all pages
+export interface Props {
+  title: string;
+  description: string;
+  banner?: string;
+}
+const { title, description } = Astro.props;
+const pageTitle = title ? `${title} · 宇哥摄影` : '宇哥摄影 · 摄影教程与技巧分享';
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>{pageTitle}</title>
+  <meta name="description" content={description}>
+  <meta name="keywords" content="摄影教程,摄影技巧,构图,调色,后期,人像摄影,风光摄影,器材评测">
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={description}>
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="zh_CN">
+  <link rel="canonical" href="https://yuge-photo.com">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+    :root{--bg:#faf9f7;--bg-card:#fff;--text:#1a1a1a;--text-sec:#666;--text-muted:#999;--border:rgba(0,0,0,0.08);--border-h:rgba(0,0,0,0.15);--shadow:0 2px 12px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.03);--shadow-h:0 8px 30px rgba(0,0,0,0.08),0 2px 8px rgba(0,0,0,0.04);--red:#c0392b;--red-l:#fef0ed;--red-t:#a93226;--gold:#d4a055;--radius:12px;--rs:8px;--pill:9999px;--sans:'Inter','PingFang SC','Noto Sans SC','Microsoft YaHei',system-ui,sans-serif;--serif:'Georgia','Noto Serif SC','Songti SC',serif;--tr:0.25s cubic-bezier(0.4,0,0.2,1);--mw:960px;--nav-bg:rgba(250,249,247,0.88)}
+    .dark{--bg:#121212;--bg-card:#1a1a1a;--text:#e8e8e8;--text-sec:#a0a0a0;--text-muted:#666;--border:rgba(255,255,255,0.08);--border-h:rgba(255,255,255,0.15);--shadow:0 2px 12px rgba(0,0,0,0.3);--shadow-h:0 8px 30px rgba(0,0,0,0.5);--red:#e74c3c;--red-l:#2d1a18;--red-t:#e74c3c;--nav-bg:rgba(18,18,18,0.88)}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.7;transition:background var(--tr),color var(--tr)}a{color:var(--red);text-decoration:none}a:hover{text-decoration:underline}
+    nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:background var(--tr),border var(--tr)}
+    .ni{max-width:var(--mw);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px}
+    .nl{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:600;letter-spacing:-0.3px;color:var(--text)}
+    .nv{display:flex;align-items:center;gap:2px}
+    .nv a{color:var(--text-sec);font-size:13px;font-weight:500;padding:6px 12px;border-radius:var(--rs);transition:all var(--tr)}
+    .nv a:hover{color:var(--text);background:var(--border)}.nv a.active{color:var(--red);background:var(--red-l)}
+    .tb{background:none;border:1px solid var(--border);cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-sec);font-size:14px;transition:all var(--tr);flex-shrink:0;margin-left:4px}
+    .tb:hover{border-color:var(--border-h);color:var(--text)}
+    footer{border-top:1px solid var(--border);padding:28px 20px;text-align:center;color:var(--text-muted);font-size:12px}
+    .fl{margin-top:6px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}.fl a{font-size:12px;color:var(--text-muted)}
+    @media(max-width:640px){.nv a{padding:5px 8px;font-size:12px}.ni{padding:0 12px}}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="ni">
+      <a href="/" class="nl"><span style="font-size:20px">📷</span> 宇哥摄影</a>
+      <div class="nv">
+        <a href="/">全部</a>
+        <a href="/?cat=composition">构图</a>
+        <a href="/?cat=portrait">人像</a>
+        <a href="/?cat=landscape">风光</a>
+        <a href="/?cat=editing">后期</a>
+        <button class="tb" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <slot />
+
+  <footer>
+    © 2026 宇哥摄影 · 全部免费
+    <div class="fl">
+      <a href="/about">关于宇哥</a>
+      <a href="#">RSS 订阅</a>
+      <a href="#">商业合作</a>
+    </div>
+  </footer>
+
+  <script>
+    const tt=document.getElementById('themeToggle');
+    if(localStorage.getItem('dark')==='true'){document.documentElement.classList.add('dark');tt.textContent='☀️'}
+    tt.addEventListener('click',()=>{const d=document.documentElement.classList.toggle('dark');localStorage.setItem('dark',d);tt.textContent=d?'☀️':'🌙'})
+  </script>
+</body>
+</html>

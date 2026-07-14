@@ -1,0 +1,149 @@
+---
+// Post page — individual article
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(/\.md$/, '') },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const p = post.data;
+
+const allPosts = await getCollection('posts');
+const related = allPosts
+  .filter(r => r.id !== post.id && (r.data.category === p.category || r.data.level === p.level))
+  .sort(() => Math.random() - 0.5)
+  .slice(0, 4);
+
+const platformColors: Record<string, string> = { bilibili: '#fb7299', douyin: '#000', youtube: '#ff0000' };
+const platformNames: Record<string, string> = { bilibili: 'B站', douyin: '抖音', youtube: 'YouTube' };
+const catNames: Record<string, string> = { composition: '构图技巧', portrait: '人像摄影', landscape: '风光摄影', editing: '后期调色', gear: '器材评测', street: '街头摄影' };
+
+const { Content } = await render(post);
+---
+
+<BaseLayout title={p.title} description={p.description}>
+  <article class="article">
+    <div class="hero-img">
+      <img src={p.banner.replace('w=800', 'w=1200')} alt="" />
+      <span class="hero-badge">{catNames[p.category] || p.category}</span>
+    </div>
+    <div class="body">
+      <h1>{p.title}</h1>
+      <div class="meta">
+        <span>📅 {p.date.toLocaleDateString('zh-CN')}</span>
+        <span>📖 {p.level}</span>
+        <span>🏷️ {p.tags.join(' · ')}</span>
+      </div>
+
+      {p.videos && p.videos.length > 0 && (
+        <div class="vs">
+          <div class="vst">▶ 配套视频教程</div>
+          {p.videos.map(v => (
+            <a class="vi" href={v.url} target="_blank" rel="noopener">
+              <div class="pb" style={`background:${platformColors[v.platform]}`}>▶</div>
+              <div class="vi-info">
+                <div class="vp">{platformNames[v.platform]}</div>
+                <div class="vt">{v.title}</div>
+              </div>
+              <span class="vl">观看 →</span>
+            </a>
+          ))}
+        </div>
+      )}
+
+      <div class="content"><Content /></div>
+
+      <div class="author">
+        <div class="aa">📷</div>
+        <div>
+          <div class="an">宇哥</div>
+          <div class="ad">10 年摄影经验，擅长人像与风光摄影。前《摄影之友》专栏作者，合作品牌包括索尼、佳能、富士。</div>
+        </div>
+      </div>
+
+      <div class="share">
+        <span class="sl">分享到</span>
+        <button class="sb" onclick="navigator.clipboard?.writeText(location.href)">🔗</button>
+        <button class="sb">💬</button>
+        <button class="sb">📣</button>
+      </div>
+
+      <div class="donate">
+        <div style="font-size:28px;margin-bottom:8px">☕</div>
+        <h3>觉得有用？请宇哥喝杯咖啡</h3>
+        <p>扫码支持宇哥持续创作更多免费教程</p>
+        <div class="qr">赞赏码（微信/支付宝）</div>
+      </div>
+
+      {related.length > 0 && (
+        <div class="related">
+          <h3>📌 推荐阅读</h3>
+          <div class="rg">
+            {related.map(r => (
+              <a href={`/posts/${r.id.replace(/\.md$/, '')}/`} class="rc">
+                <div class="rt">{r.data.title}</div>
+                <div class="rm">{r.data.description.slice(0, 40)}...</div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </article>
+
+  <style>
+    .article{max-width:720px;margin:0 auto;padding:0 0 60px}
+    .hero-img{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--border);border-radius:0 0 var(--radius) var(--radius)}
+    .hero-img img{width:100%;height:100%;object-fit:cover}
+    .hero-badge{position:absolute;top:14px;left:14px;padding:4px 12px;border-radius:var(--pill);font-size:11px;font-weight:600;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);color:#fff}
+    .body{padding:28px 28px 0}
+    .body h1{font-size:26px;font-weight:700;letter-spacing:-0.4px;line-height:1.3;margin-bottom:8px}
+    .meta{font-size:13px;color:var(--text-muted);display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+    .vs{margin:20px 0;border-radius:var(--rs);overflow:hidden;border:1px solid var(--border)}
+    .vst{font-size:13px;font-weight:600;padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;color:var(--text-sec)}
+    .vi{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);transition:background var(--tr);color:inherit}
+    .vi:last-child{border-bottom:none}.vi:hover{background:var(--bg);text-decoration:none}
+    .pb{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
+    .vi-info{min-width:0;flex:1}
+    .vp{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px}
+    .vt{font-size:13px;font-weight:500;line-height:1.4;margin-top:1px}
+    .vl{font-size:11px;color:var(--red);flex-shrink:0;font-weight:500}
+    .content{font-size:15px;line-height:1.8}
+    .content h2{font-size:19px;font-weight:600;margin:28px 0 10px;border-left:3px solid var(--red);padding-left:12px}
+    .content h3{font-size:17px;font-weight:600;margin:24px 0 10px}
+    .content p{margin-bottom:14px}
+    .content ul{padding-left:18px;margin-bottom:14px}
+    .content li{margin-bottom:4px}
+    .content blockquote{border-left:3px solid var(--red);padding:8px 0 8px 16px;margin:16px 0;color:var(--text-sec);font-style:italic;background:var(--bg);border-radius:0 var(--rs) var(--rs) 0}
+    .author{display:flex;gap:16px;align-items:flex-start;margin:24px 0;padding:20px;border-radius:var(--rs);background:var(--bg);border:1px solid var(--border)}
+    .aa{width:52px;height:52px;border-radius:50%;background:var(--red-l);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+    .an{font-size:14px;font-weight:600;margin-bottom:2px}
+    .ad{font-size:12px;color:var(--text-sec);line-height:1.5}
+    .share{display:flex;align-items:center;gap:10px;margin:20px 0;padding:16px 0;border-top:1px solid var(--border)}
+    .sl{font-size:12px;color:var(--text-muted);margin-right:4px}
+    .sb{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;border:1px solid var(--border);background:var(--bg);transition:all var(--tr)}
+    .sb:hover{border-color:var(--border-h);background:var(--red-l)}
+    .donate{margin:24px 0;padding:28px 20px;text-align:center;border-radius:var(--radius);background:var(--bg);border:1px solid var(--border)}
+    .donate h3{font-size:15px;font-weight:600;margin-bottom:4px}
+    .donate p{font-size:13px;color:var(--text-sec);margin-bottom:14px}
+    .qr{width:140px;height:140px;border-radius:var(--rs);background:linear-gradient(135deg,var(--red-l),var(--bg-card));margin:0 auto;display:flex;align-items:center;justify-content:center;border:2px dashed var(--border);font-size:12px;color:var(--text-muted)}
+    .related{margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
+    .related h3{font-size:14px;font-weight:600;margin-bottom:14px;color:var(--text-sec)}
+    .rg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .rc{padding:14px;border-radius:var(--rs);border:1px solid var(--border);transition:all var(--tr);color:inherit}
+    .rc:hover{border-color:var(--border-h);background:var(--bg);text-decoration:none}
+    .rt{font-size:13px;font-weight:600;line-height:1.4}
+    .rm{font-size:11px;color:var(--text-muted);margin-top:4px}
+    @media(max-width:640px){
+      .body{padding:20px 18px 0}
+      .body h1{font-size:20px}
+      .rg{grid-template-columns:1fr}
+    }
+  </style>
+</BaseLayout>
