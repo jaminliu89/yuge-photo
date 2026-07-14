@@ -1,0 +1,37 @@
+---
+// Photo.astro — 响应式摄影图片组件
+// 用法: <Photo src="/images/sunset.webp" alt="日落" caption="黄金时刻" />
+
+export interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  width?: number;
+  class?: string;
+}
+
+const { src, alt, caption, width = 800 } = Astro.props;
+---
+
+<figure class:list={['photo', Astro.props.class]}>
+  <img src={src} alt={alt} width={width} loading="lazy" decoding="async" />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .photo { margin: 24px 0; }
+  .photo img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-alt);
+  }
+  .photo figcaption {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    font-style: italic;
+  }
+</style>
