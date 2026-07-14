@@ -5,7 +5,6 @@ date: 2026-07-05
 category: landscape
 level: 进阶
 tags: [风光, 进阶, 长曝光, ND滤镜, 教程]
-banner: https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?w=800&q=80
 videos:
   - platform: bilibili
     title: 长曝光摄影入门

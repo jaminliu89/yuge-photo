@@ -5,7 +5,6 @@ date: 2026-07-06
 category: composition
 level: 进阶
 tags: [构图, 进阶, 引导线]
-banner: https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80
 videos:
   - platform: bilibili
     title: 引导线构图精讲

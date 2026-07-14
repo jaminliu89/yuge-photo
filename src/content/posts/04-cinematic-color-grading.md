@@ -5,7 +5,6 @@ date: 2026-07-11
 category: editing
 level: 进阶
 tags: [后期, 进阶, 调色, Lightroom, 电影感]
-banner: https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80
 videos:
   - platform: bilibili
     title: 电影调色流程完整版

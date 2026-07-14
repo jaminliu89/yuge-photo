@@ -23,15 +23,23 @@ const related = allPosts
 const platformColors: Record<string, string> = { bilibili: '#fb7299', douyin: '#000', youtube: '#ff0000' };
 const platformNames: Record<string, string> = { bilibili: 'B站', douyin: '抖音', youtube: 'YouTube' };
 const catNames: Record<string, string> = { composition: '构图技巧', portrait: '人像摄影', landscape: '风光摄影', editing: '后期调色', gear: '器材评测', street: '街头摄影' };
+const catGradients: Record<string, string> = {
+  composition: 'linear-gradient(135deg,#667eea,#764ba2)', portrait: 'linear-gradient(135deg,#f093fb,#f5576c)',
+  landscape: 'linear-gradient(135deg,#4facfe,#00f2fe)', editing: 'linear-gradient(135deg,#fa8bff,#bd7bea)',
+  gear: 'linear-gradient(135deg,#ffecd2,#fcb69f)', street: 'linear-gradient(135deg,#a1c4fd,#c2e9fb)',
+};
+const catIcons: Record<string, string> = {
+  composition: '📐', portrait: '👤', landscape: '🌄', editing: '🎨', gear: '📸', street: '🚶',
+};
 
 const { Content } = await render(post);
 ---
 
 <BaseLayout title={p.title} description={p.description}>
   <article class="article">
-    <div class="hero-img">
-      <img src={p.banner.replace('w=800', 'w=1200')} alt="" />
-      <span class="hero-badge">{catNames[p.category] || p.category}</span>
+    <div class="hero-img" style={`background:${catGradients[p.category]};display:flex;align-items:center;justify-content:center;font-size:64px`}>
+      <span>{catIcons[p.category]}</span>
+      <span class="hero-badge" style="position:absolute;bottom:14px;left:14px;padding:4px 12px;border-radius:var(--pill);font-size:11px;font-weight:600;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);color:#fff">{catNames[p.category] || p.category}</span>
     </div>
     <div class="body">
       <h1>{p.title}</h1>

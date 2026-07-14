@@ -5,7 +5,6 @@ date: 2026-07-13
 category: portrait
 level: 入门
 tags: [人像, 入门, 自然光, 光线]
-banner: https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80
 videos:
   - platform: bilibili
     title: 自然光人像全攻略（上）

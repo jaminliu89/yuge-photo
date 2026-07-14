@@ -18,6 +18,18 @@ const catMap: Record<string, string> = {
   composition: '构图技巧', portrait: '人像摄影', landscape: '风光摄影',
   editing: '后期调色', gear: '器材评测', street: '街头摄影',
 };
+const catGradients: Record<string, string> = {
+  composition: 'linear-gradient(135deg,#667eea,#764ba2)',
+  portrait: 'linear-gradient(135deg,#f093fb,#f5576c)',
+  landscape: 'linear-gradient(135deg,#4facfe,#00f2fe)',
+  editing: 'linear-gradient(135deg,#fa8bff,#bd7bea)',
+  gear: 'linear-gradient(135deg,#ffecd2,#fcb69f)',
+  street: 'linear-gradient(135deg,#a1c4fd,#c2e9fb)',
+};
+const catIcons: Record<string, string> = {
+  composition: '📐', portrait: '👤', landscape: '🌄',
+  editing: '🎨', gear: '📸', street: '🚶',
+};
 ---
 
 <BaseLayout title="" description="专业摄影教程，构图技巧、后期调色、器材评测、人像风光实战。宇哥手把手带你从入门到精通。">
@@ -50,8 +62,8 @@ const catMap: Record<string, string> = {
           const platforms = p.videos ? [...new Set(p.videos.map(v => v.platform))] : [];
           return (
             <a href={`/posts/${post.id.replace(/\.md$/, '')}/`} class="card">
-              <div class="cb">
-                <img src={p.banner} alt="" loading="lazy" />
+              <div class="cb" style={`background:${catGradients[p.category]};display:flex;align-items:center;justify-content:center;font-size:48px`}>
+                <span>{catIcons[p.category]}</span>
               </div>
               <div class="cbody">
                 <div class="ctags">

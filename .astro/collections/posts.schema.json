@@ -28,9 +28,6 @@
         "type": "string"
       }
     },
-    "banner": {
-      "type": "string"
-    },
     "videos": {
       "type": "array",
       "items": {
@@ -68,7 +65,6 @@
     "date",
     "category",
     "level",
-    "tags",
-    "banner"
+    "tags"
   ]
 }

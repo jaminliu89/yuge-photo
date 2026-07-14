@@ -10,7 +10,6 @@ const posts = defineCollection({
     category: z.string(),
     level: z.enum(['入门', '进阶']),
     tags: z.array(z.string()),
-    banner: z.string(),
     videos: z.array(z.object({
       platform: z.enum(['bilibili', 'douyin', 'youtube']),
       title: z.string(),

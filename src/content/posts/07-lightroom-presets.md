@@ -5,7 +5,6 @@ date: 2026-07-08
 category: editing
 level: 进阶
 tags: [后期, 进阶, 调色, 预设, Lightroom]
-banner: https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800&q=80
 videos:
   - platform: bilibili
     title: 预设调色入门

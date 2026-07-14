@@ -5,7 +5,6 @@ date: 2026-07-09
 category: street
 level: 入门
 tags: [街头, 入门, 街拍, 技巧]
-banner: https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80
 videos:
   - platform: bilibili
     title: 街头摄影入门指南

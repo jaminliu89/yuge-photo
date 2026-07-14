@@ -5,7 +5,6 @@ date: 2026-07-12
 category: landscape
 level: 进阶
 tags: [风光, 进阶, 构图, 三景法]
-banner: https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80
 videos:
   - platform: bilibili
     title: 风光构图三景法

@@ -5,7 +5,6 @@ date: 2026-07-07
 category: portrait
 level: 进阶
 tags: [人像, 进阶, 户外, 实战, 光线]
-banner: https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&q=80
 videos:
   - platform: bilibili
     title: 户外人像拍摄全流程

@@ -5,7 +5,6 @@ date: 2026-07-10
 category: gear
 level: 入门
 tags: [器材, 入门, 相机, 推荐]
-banner: https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80
 videos:
   - platform: bilibili
     title: 2026年相机选购指南

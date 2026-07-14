@@ -5,7 +5,6 @@ date: 2026-07-14
 category: composition
 level: 入门
 tags: [构图, 入门, 三分法]
-banner: https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80
 videos:
   - platform: bilibili
     title: 三分法构图实战讲解
