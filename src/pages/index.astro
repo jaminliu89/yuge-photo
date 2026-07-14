@@ -1,133 +1,84 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import Layout from '../layouts/BaseLayout.astro'
+import { getAllPosts } from '../sanity'
 
-const allPosts = await getCollection('posts');
-const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-const cat = Astro.url.searchParams.get('cat') || 'all';
-const filtered = cat === 'all' ? posts : posts.filter(p => p.data.category === cat);
-
-const catNames: Record<string, string> = {
-  all: '全部', composition: '构图', portrait: '人像',
-  landscape: '风光', editing: '后期', gear: '器材', street: '街头',
-};
-const platformColors: Record<string, string> = { bilibili: '#fb7299', douyin: '#000', youtube: '#ff0000' };
-const platformLabels: Record<string, string> = { bilibili: 'B', douyin: '抖音', youtube: 'YT' };
-const catMap: Record<string, string> = {
-  composition: '构图技巧', portrait: '人像摄影', landscape: '风光摄影',
-  editing: '后期调色', gear: '器材评测', street: '街头摄影',
-};
-const catGradients: Record<string, string> = {
-  composition: 'linear-gradient(135deg,#667eea,#764ba2)',
-  portrait: 'linear-gradient(135deg,#f093fb,#f5576c)',
-  landscape: 'linear-gradient(135deg,#4facfe,#00f2fe)',
-  editing: 'linear-gradient(135deg,#fa8bff,#bd7bea)',
-  gear: 'linear-gradient(135deg,#ffecd2,#fcb69f)',
-  street: 'linear-gradient(135deg,#a1c4fd,#c2e9fb)',
-};
-const catIcons: Record<string, string> = {
-  composition: '📐', portrait: '👤', landscape: '🌄',
-  editing: '🎨', gear: '📸', street: '🚶',
-};
+const allPosts = await getAllPosts()
+const allCats = [...new Set(allPosts.map(p => p.category).filter(Boolean))]
+const cat = Astro.url.searchParams.get('cat')
+const posts = cat ? allPosts.filter(p => p.category === cat) : allPosts
 ---
 
-<BaseLayout title="" description="专业摄影教程，构图技巧、后期调色、器材评测、人像风光实战。宇哥手把手带你从入门到精通。">
-  <section class="hero">
-    <div class="hc">
-      <div class="hb">免费 · 每周更新</div>
-      <h1>学摄影，从宇哥开始</h1>
-      <p>构图、人像、风光、后期调色、器材评测——每一篇都是实拍经验，附视频讲解</p>
-      <div class="stats">
-        <div class="si"><div class="sn">{posts.length}</div><div class="sl">免费教程</div></div>
-        <div class="si"><div class="sn">6</div><div class="sl">分类</div></div>
-        <div class="si"><div class="sn">每周</div><div class="sl">更新</div></div>
+<Layout title="宇哥摄影 · 摄影教程与技巧分享" description="专业摄影教程，构图技巧、后期调色、器材评测、人像风光实战。宇哥手把手带你从入门到精通。">
+  <main>
+    <section class="hero">
+      <div class="hc">
+        <div class="hb">免费 · 每周更新</div>
+        <h1>学摄影，从宇哥开始</h1>
+        <p>构图、人像、风光、后期调色、器材评测——每一篇都是实拍经验，附视频讲解</p>
+        <div class="stats">
+          <div class="si"><div class="sn">{allPosts.length}</div><div class="sl">免费教程</div></div>
+          <div class="si"><div class="sn">{allCats.length}</div><div class="sl">分类</div></div>
+          <div class="si"><div class="sn">每周</div><div class="sl">更新</div></div>
+        </div>
       </div>
+    </section>
+
+    <div class="cats">
+      <a href="/" class="cat-btn{!cat ? ' active' : ''}">全部</a>
+      {allCats.map(c => (
+        <a href={`/?cat=${c}`} class="cat-btn{cat === c ? ' active' : ''}">{c}</a>
+      ))}
     </div>
-  </section>
 
-  <div class="cats">
-    {Object.entries(catNames).map(([key, name]) => (
-      <a href={key === 'all' ? '/' : `/?cat=${key}`} class:list={['cat-btn', { active: cat === key }]}>{name}</a>
-    ))}
-  </div>
-
-  <main class="main">
-    {filtered.length === 0 ? (
-      <div class="empty"><p>该分类暂无教程，看看其他分类</p></div>
-    ) : (
-      <div class="grid">
-        {filtered.map((post) => {
-          const p = post.data;
-          const platforms = p.videos ? [...new Set(p.videos.map(v => v.platform))] : [];
-          return (
-            <a href={`/posts/${post.id.replace(/\.md$/, '')}/`} class="card">
-              <div class="cb" style={`background:${catGradients[p.category]};display:flex;align-items:center;justify-content:center;font-size:48px`}>
-                <span>{catIcons[p.category]}</span>
-              </div>
-              <div class="cbody">
-                <div class="ctags">
-                  <span class="ctag cat">{catMap[p.category] || p.category}</span>
-                  <span class="ctag lv">{p.level}</span>
-                </div>
-                <h3 class="ctitle">{p.title}</h3>
-                <p class="cex">{p.description}</p>
-                <div class="cmeta">
-                  <span class="cd">{p.date.toLocaleDateString('zh-CN')}</span>
-                  {platforms.length > 0 && (
-                    <span class="cplat">{platforms.map(pl => <span class="pi" style={`background:${platformColors[pl]}`}>{platformLabels[pl]}</span>)}</span>
-                  )}
-                </div>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-    )}
+    <div class="grid">
+      {posts.map(post => (
+        <a href={`/posts/${post.slug.current}`} class="card">
+          {post.heroImageUrl && <img src={post.heroImageUrl} alt={post.title} class="ci" loading="lazy" />}
+          <div class="cb">
+            <div class="cm"><span class="ct">{post.category}</span>{post.level && <span class="cl">{post.level}</span>}</div>
+            <h2 class="ctitle">{post.title}</h2>
+            <p class="cd">{post.description}</p>
+            <div class="cf">
+              <time>{new Date(post.publishedAt).toLocaleDateString('zh-CN')}</time>
+              {post.videos?.length > 0 && <span class="cv">🎬 含视频</span>}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
   </main>
+</Layout>
 
-  <style>
-    .hero{position:relative;overflow:hidden;padding:60px 20px 44px;text-align:center}
-    .hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--red-l) 0%,transparent 50%,rgba(212,160,85,0.08) 100%);pointer-events:none}
-    .hc{position:relative;max-width:600px;margin:0 auto}
-    .hb{display:inline-block;padding:4px 14px;border-radius:var(--pill);font-size:11px;font-weight:600;background:var(--red);color:#fff;margin-bottom:14px}
-    .hero h1{font-family:var(--serif);font-size:36px;font-weight:700;letter-spacing:-0.5px;line-height:1.25;margin-bottom:10px}
-    .hero p{font-size:15px;color:var(--text-sec);line-height:1.6;margin-bottom:20px}
-    .stats{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:16px}
-    .si{text-align:center}
-    .sn{font-size:22px;font-weight:700;letter-spacing:-0.5px}
-    .sl{font-size:11px;color:var(--text-muted);margin-top:2px}
-    .cats{max-width:var(--mw);margin:0 auto;padding:20px 20px 0;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
-    .cat-btn{padding:5px 14px;border-radius:var(--pill);border:1px solid var(--border);background:var(--bg-card);color:var(--text-sec);font-size:12px;font-weight:500;transition:all var(--tr)}
-    .cat-btn:hover{border-color:var(--border-h);color:var(--text)}
-    .cat-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
-    .main{max-width:var(--mw);margin:0 auto;padding:20px 20px 60px}
-    .empty{text-align:center;padding:56px 20px;color:var(--text-muted)}
-    .grid{display:grid;grid-template-columns:1fr;gap:20px}
-    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all var(--tr);box-shadow:var(--shadow);display:grid;grid-template-columns:280px 1fr;color:inherit}
-    .card:hover{border-color:var(--border-h);box-shadow:var(--shadow-h);transform:translateY(-2px);text-decoration:none}
-    .cb{position:relative;overflow:hidden;min-height:180px;background:var(--border)}
-    .cb img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;position:absolute;inset:0}
-    .card:hover .cb img{transform:scale(1.04)}
-    .cbody{padding:20px 22px;display:flex;flex-direction:column}
-    .ctags{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
-    .ctag{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
-    .ctag.cat{background:var(--red-l);color:var(--red-t)}
-    .ctag.lv{background:#e8f0fe;color:#1a73e8}
-    .ctitle{font-size:17px;font-weight:600;line-height:1.4;margin-bottom:6px;color:var(--text)}
-    .cex{font-size:13px;color:var(--text-sec);line-height:1.6;margin-bottom:12px;flex:1}
-    .cmeta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-muted);padding-top:10px;border-top:1px solid var(--border);margin-top:auto}
-    .cd{white-space:nowrap}
-    .cplat{display:flex;gap:3px}
-    .pi{width:18px;height:18px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff}
-    @media(max-width:768px){
-      .card{grid-template-columns:1fr}
-      .cb{aspect-ratio:16/9;min-height:auto}
-      .cb img{position:relative}
-      .hero h1{font-size:28px}
-      .hero{padding:44px 16px 32px}
-      .cbody{padding:14px 16px 16px}
-      .ctitle{font-size:15px}
-    }
-  </style>
-</BaseLayout>
+<style>
+  main { max-width: 960px; margin: 0 auto; padding: 0 20px 60px; }
+  .hero { text-align: center; padding: 60px 0 40px; }
+  .hc { max-width: 600px; margin: 0 auto; }
+  .hb { display: inline-block; background: var(--red-l); color: var(--red-t); padding: 4px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; margin-bottom: 16px; }
+  .hero h1 { font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.5px; }
+  .hero p { color: var(--text-sec); font-size: 16px; line-height: 1.6; margin-bottom: 28px; }
+  .stats { display: flex; justify-content: center; gap: 40px; }
+  .si { text-align: center; }
+  .sn { font-size: 28px; font-weight: 700; }
+  .sl { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
+  .cats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; justify-content: center; }
+  .cat-btn { padding: 6px 18px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--text-sec); background: var(--bg-card); border: 1px solid var(--border); transition: all var(--tr); text-decoration: none; }
+  .cat-btn:hover { border-color: var(--border-h); color: var(--text); }
+  .cat-btn.active { background: var(--red); color: #fff; border-color: var(--red); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+  .card { background: var(--bg-card); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); transition: all var(--tr); text-decoration: none; color: inherit; }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-h); border-color: var(--border-h); }
+  .ci { width: 100%; height: 180px; object-fit: cover; display: block; background: var(--border); }
+  .cb { padding: 20px; }
+  .cm { display: flex; gap: 8px; margin-bottom: 8px; font-size: 12px; }
+  .ct { background: var(--red-l); color: var(--red); padding: 2px 10px; border-radius: 4px; font-weight: 600; }
+  .cl { color: var(--text-muted); border: 1px solid var(--border); padding: 2px 10px; border-radius: 4px; }
+  .ctitle { font-size: 18px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+  .cd { color: var(--text-sec); font-size: 14px; line-height: 1.5; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .cf { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-muted); }
+  .cv { color: var(--gold); font-size: 12px; }
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 28px; }
+    .grid { grid-template-columns: 1fr; }
+    .stats { gap: 24px; }
+  }
+</style>
